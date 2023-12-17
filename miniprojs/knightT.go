@@ -12,8 +12,8 @@ import (
 // 1. Initialize the board
 const (
 	colStart = 0
-	colEnd   = 8
-	rowStart = 0
+	colEnd   = 7
+	rowStart = 1
 	rowEnd   = 8
 )
 
@@ -52,10 +52,50 @@ func main() {
 		fmt.Print("Invalid square.")
 	}
 
-	checkMoveDF(start, goal, squareToText(start))
+	// checkMoveDF(start, goal, squareToText(start))
+	checkMoveBF([][][2]int8{{start}}, goal)
+
 }
 
-// Depth-first search
+// Breadth-first search
+func checkMoveBF(paths [][][2]int8, goal [2]int8) {
+
+	newPaths := [][][2]int8{}
+
+	for _, path := range paths {
+
+		moves := knightMovements(path[len(path)-1])
+
+		for _, move := range moves {
+			if reflect.DeepEqual(move, goal) {
+				newPath := append(path, move)
+				fmt.Printf("\nreached [%d]: %v\n", len(newPath), pathToText(newPath))
+				newPaths = nil
+				return
+
+			} else if !isOutOfBound(move) && !sliceContains(path, move) {
+				newPath := append(path, move)
+				fmt.Printf("\nnewPath: %v\n", pathToText(newPath))
+				newPaths = append(paths, newPath)
+
+			}
+		}
+	}
+
+	if len(newPaths) > 0 {
+		checkMoveBF(newPaths, goal)
+	}
+}
+
+func sliceContains(elements [][2]int8, item [2]int8) bool {
+	for _, e := range elements {
+		if reflect.DeepEqual(e, item) {
+			return true
+		}
+	}
+	return false
+}
+
 var found bool = false
 
 func checkMoveDF(square, goal [2]int8, path string) {
@@ -87,17 +127,17 @@ func knightMovements(square [2]int8) (moves [8][2]int8) {
 		{col + 2, row + 1},
 		{col + 2, row - 1},
 		{col + 1, row + 2},
-		{col - 1, row + 2},
+		{col + 1, row - 2},
 		{col - 2, row + 1},
 		{col - 2, row - 1},
-		{col + 1, row - 2},
+		{col - 1, row + 2},
 		{col - 1, row - 2},
 	}
 	return moves
 }
 
 func squareToText(square [2]int8) (text string) {
-	colIndex := square[0] - 1
+	colIndex := square[0]
 	row := square[1]
 	return string(colIndex+'a') + strconv.Itoa(int(row))
 }
@@ -108,10 +148,18 @@ func textToSquare(text string) (square [2]int8) {
 		row := text[1]
 		rowNum, err := strconv.ParseInt(string(row), 10, 8)
 		if err == nil {
-			return [2]int8{int8(col - 'a' + 1), int8(rowNum)}
+			return [2]int8{int8(col - 'a'), int8(rowNum)}
 		}
 	}
 	return [2]int8{-1, -1}
+}
+
+func pathToText(path [][2]int8) string {
+	var res string
+	for _, square := range path {
+		res += "->" + squareToText(square)
+	}
+	return res[2:]
 }
 
 func isOutOfBound(square [2]int8) bool {
