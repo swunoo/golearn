@@ -1,3 +1,3 @@
-module knightT
+module main
 
 go 1.18
