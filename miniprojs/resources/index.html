@@ -6,26 +6,27 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <h1>Welcome to the Home Page!</h1>
-    <form action="GET" onsubmit="submitForm(event)">
-        <label>
-            <p>Start</p>
-            <input type="text" name="start" maxlength="2">
-        </label>
-        <label>
-            <p>Goal</p>
-            <input type="text" name="goal" maxlength="2">
-        </label>
-        <button type="submit">Calc</button>
-    </form>
-
-    <p>Display</p>
-    <div id="display"></div>
+    <main id="container">
+        <header><h1>The Knight Travails</h1></header>
+        <form action="GET" onsubmit="submitForm(event)">
+            <div class="flex">
+                <label>
+                    <p>Start</p>
+                    <input type="text" name="start" maxlength="2">
+                </label>
+                <label>
+                    <p>Goal</p>
+                    <input type="text" name="goal" maxlength="2">
+                </label>
+            </div>
+            <button type="submit">Travail!</button>
+        </form>
     
-    <script>
-        const startInput = document.querySelector('input[name="start"]')
-        const goalInput = document.querySelector('input[name="goal"]')
-        const display = document.getElementById('display')
-    </script>
+        <div id="display"></div>
+        <div id="progress"></div>
+
+        <footer><span>©2023 by swanoo</span></footer>
+    </main>
+    
 </body>
 </html>
