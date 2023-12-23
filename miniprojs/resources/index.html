@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Go Server</title>
+    <script src="./script.js" defer></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <h1>Welcome to the Home Page!</h1>
+    <form action="GET" onsubmit="submitForm(event)">
+        <label>
+            <p>Start</p>
+            <input type="text" name="start" maxlength="2">
+        </label>
+        <label>
+            <p>Goal</p>
+            <input type="text" name="goal" maxlength="2">
+        </label>
+        <button type="submit">Calc</button>
+    </form>
+
+    <script>
+        const startInput = document.querySelector('input[name="start"]')
+        const goalInput = document.querySelector('input[name="goal"]')
+        
+    </script>
+</body>
+</html>

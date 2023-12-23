@@ -6,7 +6,6 @@ import (
 	"os"
 	"reflect"
 	"strconv"
-	"strings"
 )
 
 // 1. Initialize the board
@@ -20,13 +19,8 @@ const (
 /*
 * The knight travails
  */
-func main() {
+func cliKnightT() {
 
-	// 2. Add Knight movement logic
-
-	// 3. Add Path finding logic
-
-	// 4. Ask for userinputs
 	var start [2]int8
 	var goal [2]int8
 
@@ -53,12 +47,13 @@ func main() {
 	}
 
 	// checkMoveDF(start, goal, squareToText(start))
-	checkMoveBF([][][2]int8{{start}}, goal)
+	pathText := checkMoveBF([][][2]int8{{start}}, goal)
+	fmt.Printf("\nreached: %v\n", pathText)
 
 }
 
 // Breadth-first search
-func checkMoveBF(paths [][][2]int8, goal [2]int8) {
+func checkMoveBF(paths [][][2]int8, goal [2]int8) string {
 
 	newPaths := [][][2]int8{}
 
@@ -69,13 +64,12 @@ func checkMoveBF(paths [][][2]int8, goal [2]int8) {
 		for _, move := range moves {
 			if reflect.DeepEqual(move, goal) {
 				newPath := append(path, move)
-				fmt.Printf("\nreached [%d]: %v\n", len(newPath), pathToText(newPath))
 				newPaths = nil
-				return
+				return pathToText(newPath)
 
 			} else if !isOutOfBound(move) && !sliceContains(path, move) {
 				newPath := append(path, move)
-				fmt.Printf("\nnewPath: %v\n", pathToText(newPath))
+				// fmt.Printf("\nnewPath: %v\n", pathToText(newPath))
 				newPaths = append(paths, newPath)
 
 			}
@@ -83,8 +77,10 @@ func checkMoveBF(paths [][][2]int8, goal [2]int8) {
 	}
 
 	if len(newPaths) > 0 {
-		checkMoveBF(newPaths, goal)
+		return checkMoveBF(newPaths, goal)
 	}
+
+	return ""
 }
 
 func sliceContains(elements [][2]int8, item [2]int8) bool {
@@ -94,30 +90,6 @@ func sliceContains(elements [][2]int8, item [2]int8) bool {
 		}
 	}
 	return false
-}
-
-var found bool = false
-
-func checkMoveDF(square, goal [2]int8, path string) {
-
-	moves := knightMovements(square)
-
-	for _, move := range moves {
-
-		if reflect.DeepEqual(square, goal) {
-			fmt.Printf("\nreached: %q\n", path)
-			found = true
-			return
-
-		} else if !isOutOfBound(square) && !found {
-			moveText := squareToText(move)
-			if !strings.Contains(path, moveText) {
-				fmt.Printf("\nchecking: %q to %v", path, move)
-				checkMoveDF(move, goal, path+"->"+moveText)
-			}
-		}
-
-	}
 }
 
 func knightMovements(square [2]int8) (moves [8][2]int8) {
@@ -166,3 +138,27 @@ func isOutOfBound(square [2]int8) bool {
 	return (square[0] > colEnd || square[1] > rowEnd ||
 		square[0] < colStart || square[1] < rowStart)
 }
+
+// var found bool = false
+
+// func checkMoveDF(square, goal [2]int8, path string) {
+
+// 	moves := knightMovements(square)
+
+// 	for _, move := range moves {
+
+// 		if reflect.DeepEqual(square, goal) {
+// 			fmt.Printf("\nreached: %q\n", path)
+// 			found = true
+// 			return
+
+// 		} else if !isOutOfBound(square) && !found {
+// 			moveText := squareToText(move)
+// 			if !strings.Contains(path, moveText) {
+// 				fmt.Printf("\nchecking: %q to %v", path, move)
+// 				checkMoveDF(move, goal, path+"->"+moveText)
+// 			}
+// 		}
+
+// 	}
+// }
