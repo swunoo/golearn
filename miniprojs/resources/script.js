@@ -28,6 +28,9 @@ function submitForm(e) {
         )
         .then(res => res.json())
         .then(res => {
+
+            console.log(res.result);
+
             progress.innerHTML = '';
             const resultArr = res.result.split('->');
             resultArr.forEach((item, index) => {

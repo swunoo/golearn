@@ -12,7 +12,7 @@ type Response struct {
 	Result string `json:"result"`
 }
 
-func main() {
+func startServer() {
 	// Handlers
 	http.HandleFunc("/home", homeHandler)
 	http.HandleFunc("/api/calc", calculateHandler)
@@ -48,7 +48,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := checkMoveBF([][][2]int8{{startSquare}}, goalSquare)
+	result := checkMoveWithNodes(startSquare, goalSquare)
 
 	// Create JSON response
 	response := Response{Result: result}

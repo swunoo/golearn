@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // 1. Initialize the board
@@ -19,6 +20,8 @@ const (
 /*
 * The knight travails
  */
+
+// ENTRY POINT FOR TESTING
 func cliKnightT() {
 
 	var start [2]int8
@@ -47,12 +50,75 @@ func cliKnightT() {
 	}
 
 	// checkMoveDF(start, goal, squareToText(start))
-	pathText := checkMoveBF([][][2]int8{{start}}, goal)
+	// pathText := checkMoveBF([][][2]int8{{start}}, goal)
+	pathText := checkMoveWithNodes(start, goal)
 	fmt.Printf("\nreached: %v\n", pathText)
-
 }
 
-// Breadth-first search
+// 1. USING 'NODE' STRUCT FOR BFS
+type Node struct {
+	value  [2]int8
+	parent *Node
+}
+
+func checkMoveWithNodes(start, goal [2]int8) string {
+	startNode := Node{value: start, parent: nil}
+	currentNodes := []Node{startNode}
+	nextNodes := []Node{}
+	visited := [][2]int8{}
+
+	for {
+		for _, node := range currentNodes {
+
+			moves := knightMovements(node.value)
+
+			for _, move := range moves {
+
+				if move == goal {
+					finalNode := Node{value: move, parent: &node}
+					return nodesToString(finalNode)
+
+				} else if !isOutOfBound(move) && !sliceContains(visited, move) {
+					nodified := Node{value: move, parent: &node}
+					nextNodes = append(nextNodes, nodified)
+					visited = append(visited, move)
+				}
+			}
+		}
+		currentNodes = nextNodes
+		nextNodes = []Node{}
+	}
+}
+
+func nodesToString(node Node) string {
+	nodeValues := collectNodeValues(node)
+	var strBuilder strings.Builder
+	for i := len(nodeValues) - 1; i >= 0; i-- {
+		strBuilder.WriteString(squareToText(nodeValues[i]))
+		if i > 0 {
+			strBuilder.WriteString("->")
+		}
+	}
+
+	return strBuilder.String()
+}
+
+func collectNodeValues(node Node) (nodeValues [][2]int8) {
+	fmt.Printf("\nTraversing for %q, its parents are ", squareToText(node.value))
+	for {
+		nodeValues = append(nodeValues, node.value)
+		if node.parent == nil {
+			fmt.Printf("\nParent of %q is nil.\n", squareToText(node.value))
+			break
+		}
+		fmt.Printf("%q, ", squareToText(node.parent.value))
+		node = *node.parent
+	}
+	fmt.Print("\n")
+	return
+}
+
+// 2. BFS (first attempt)
 func checkMoveBF(paths [][][2]int8, goal [2]int8) string {
 
 	newPaths := [][][2]int8{}
@@ -83,15 +149,7 @@ func checkMoveBF(paths [][][2]int8, goal [2]int8) string {
 	return ""
 }
 
-func sliceContains(elements [][2]int8, item [2]int8) bool {
-	for _, e := range elements {
-		if reflect.DeepEqual(e, item) {
-			return true
-		}
-	}
-	return false
-}
-
+// UTILITIES
 func knightMovements(square [2]int8) (moves [8][2]int8) {
 	col := square[0]
 	row := square[1]
@@ -105,6 +163,7 @@ func knightMovements(square [2]int8) (moves [8][2]int8) {
 		{col - 1, row + 2},
 		{col - 1, row - 2},
 	}
+
 	return moves
 }
 
@@ -139,26 +198,11 @@ func isOutOfBound(square [2]int8) bool {
 		square[0] < colStart || square[1] < rowStart)
 }
 
-// var found bool = false
-
-// func checkMoveDF(square, goal [2]int8, path string) {
-
-// 	moves := knightMovements(square)
-
-// 	for _, move := range moves {
-
-// 		if reflect.DeepEqual(square, goal) {
-// 			fmt.Printf("\nreached: %q\n", path)
-// 			found = true
-// 			return
-
-// 		} else if !isOutOfBound(square) && !found {
-// 			moveText := squareToText(move)
-// 			if !strings.Contains(path, moveText) {
-// 				fmt.Printf("\nchecking: %q to %v", path, move)
-// 				checkMoveDF(move, goal, path+"->"+moveText)
-// 			}
-// 		}
-
-// 	}
-// }
+func sliceContains(elements [][2]int8, item [2]int8) bool {
+	for _, e := range elements {
+		if reflect.DeepEqual(e, item) {
+			return true
+		}
+	}
+	return false
+}
