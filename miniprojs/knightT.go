@@ -20,8 +20,6 @@ const (
 /*
 * The knight travails
  */
-
-// ENTRY POINT FOR TESTING
 func cliKnightT() {
 
 	var start [2]int8
@@ -49,8 +47,6 @@ func cliKnightT() {
 		fmt.Print("Invalid square.")
 	}
 
-	// checkMoveDF(start, goal, squareToText(start))
-	// pathText := checkMoveBF([][][2]int8{{start}}, goal)
 	pathText := checkMoveWithNodes(start, goal)
 	fmt.Printf("\nreached: %v\n", pathText)
 }
@@ -118,7 +114,7 @@ func collectNodeValues(node Node) (nodeValues [][2]int8) {
 	return
 }
 
-// 2. BFS (first attempt)
+// 2. BFS
 func checkMoveBF(paths [][][2]int8, goal [2]int8) string {
 
 	newPaths := [][][2]int8{}
